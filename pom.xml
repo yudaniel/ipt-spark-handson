@@ -12,24 +12,32 @@
         <mainClass>ch.ipt.handson.SimpleLocalExample</mainClass>
         <spark.version>2.4.4</spark.version>
         <java.version>1.8</java.version>
+        <google-cloud-storage.version>1.92.0</google-cloud-storage.version>
     </properties>
 
 
     <dependencies>
+        <!-- Spark Dependencies -->
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.11</artifactId>
+            <artifactId>spark-core_2.12</artifactId>
             <version>${spark.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.11</artifactId>
+            <artifactId>spark-sql_2.12</artifactId>
             <version>${spark.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-mllib_2.11</artifactId>
+            <artifactId>spark-mllib_2.12</artifactId>
             <version>${spark.version}</version>
+        </dependency>
+        <!-- Google Cloud Bucket -->
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-storage</artifactId>
+            <version>${google-cloud-storage.version}</version>
         </dependency>
     </dependencies>
     <repositories>
