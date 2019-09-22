@@ -10,7 +10,7 @@
 
     <properties>
         <mainClass>ch.ipt.handson.SimpleLocalExample</mainClass>
-        <spark.version>2.1.0</spark.version>
+        <spark.version>2.4.4</spark.version>
         <java.version>1.8</java.version>
     </properties>
 
