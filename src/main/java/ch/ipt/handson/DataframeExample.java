@@ -11,7 +11,6 @@ import static org.apache.spark.sql.functions.col;
 
 public class DataframeExample {
     public static void main(String[] args) {
-        final int DEFAULT_NUM_ROWS = 5;
 
         // Create a new local SparkSession
         SparkSession spark =
@@ -24,18 +23,14 @@ public class DataframeExample {
         sc.setLogLevel("ERROR");
 
         // Read the online-retail-dataset.csv
-        String path = "src/main/resources/online-retail-dataset.csv";
-
-        // read all the data
         Dataset<Row> ds = spark.read().format("csv")
                 .option("sep", ",")
                 .option("inferSchema", "true")
                 .option("header", "true")
-                .load(path);
-
+                .load(ProgramConstants.ALL_RETAIL_PATH);
 
         ds.printSchema();
-        ds.show(2 * DEFAULT_NUM_ROWS);
+        ds.show(2 * ProgramConstants.DEFAULT_NUM_ROWS);
 
         // items per invoice
         ds.groupBy("InvoiceNo").count().sort(desc("count")).show();
@@ -43,8 +38,10 @@ public class DataframeExample {
         // convert string column to timestamp column
         Column invoiceDateColumn = to_timestamp(col("invoiceDate"), "MM/dd/yyyy HH:mm");
         ds = ds.withColumn("invoiceDate", invoiceDateColumn);
+        ds.printSchema();
 
-        Dataset<Row> purchasePerCustomerPerDay = ds.selectExpr("CustomerID",
+        Dataset<Row> purchasePerCustomerPerDay = ds.selectExpr(
+                "CustomerID",
                 "(UnitPrice * Quantity) as total_cost",
                 "InvoiceDate")
                 .groupBy(col("CustomerID"), window(col("InvoiceDate"), "1 day"))
@@ -57,16 +54,16 @@ public class DataframeExample {
         purchasePerCustomerPerDay.explain();
 
         purchasePerCustomerPerDay = purchasePerCustomerPerDay.na().drop();
-        purchasePerCustomerPerDay.show(DEFAULT_NUM_ROWS, false);
+        purchasePerCustomerPerDay.show(ProgramConstants.DEFAULT_NUM_ROWS, false);
 
         Dataset<Row> cleanedDataset = ds
                 .na().fill(0L)
                 .withColumn("DayOfWeek", date_format(col("InvoiceDate"), "EEEE"))
                 .repartition(4);
         System.out.println("Number of partitions: " + cleanedDataset.rdd().partitions().length);
-        cleanedDataset.show(DEFAULT_NUM_ROWS);
+        cleanedDataset.show(ProgramConstants.DEFAULT_NUM_ROWS);
 
         // These could also be discarded - depends on whether we think this is valuable
-        cleanedDataset.where("CustomerID == 0").show(DEFAULT_NUM_ROWS);
+        cleanedDataset.where("CustomerID == 0").show(ProgramConstants.DEFAULT_NUM_ROWS);
     }
 }
