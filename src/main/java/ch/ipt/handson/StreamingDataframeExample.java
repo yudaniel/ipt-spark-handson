@@ -68,7 +68,6 @@ public class StreamingDataframeExample {
                 .start();
 
         createPurchasePerCustomerPerMonthTable.awaitTermination(10000);
-        Thread.sleep(10000);
         createPurchasePerCustomerPerMonthTable.stop();
 
         spark.sql("SELECT * " +
