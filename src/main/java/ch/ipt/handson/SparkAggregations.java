@@ -30,6 +30,8 @@ public class SparkAggregations {
 
         dailySalesDataset.printSchema();
 
+        dailySalesDataset.describe().show();
+
         // what do these queries do?
         dailySalesDataset.select(count("StockCode")).show();
         dailySalesDataset.select(countDistinct("StockCode")).show();
@@ -38,6 +40,10 @@ public class SparkAggregations {
         dailySalesDataset.select(min("Quantity"), max("Quantity")).show();
         dailySalesDataset.select(sum("Quantity")).show();
         dailySalesDataset.select(sumDistinct("Quantity")).show();
+
+        double pearsonCorrelation = dailySalesDataset.stat().corr("UnitPrice", "Quantity");
+        dailySalesDataset.select(corr("UnitPrice", "Quantity")).show();
+        System.out.println("Correlation between UnitPrice and Quantity: " + pearsonCorrelation);
 
         // what's the difference between select and selectExpr?
         dailySalesDataset.select(
@@ -77,5 +83,13 @@ public class SparkAggregations {
         dailySalesDataset.groupBy("InvoiceNo").
                 agg(expr("avg(Quantity)"), expr("stddev_pop(Quantity)"))
                 .show();
+
+        Dataset<Row> dailySalesDatasetWithDate = dailySalesDataset.withColumn("date", to_date(col("InvoiceDate"), "yyyy-MM-dd"));
+        dailySalesDatasetWithDate.createOrReplaceTempView("dailySalesWithDate");
+        dailySalesDatasetWithDate.show();
+
+        Dataset<Row> pivotTable = dailySalesDatasetWithDate.groupBy("date").pivot("Country").sum();
+        pivotTable.show();
+        pivotTable.where("date > '2010-10-01'").select("date" ,"`France_sum(Quantity)`").show();
     }
 }
