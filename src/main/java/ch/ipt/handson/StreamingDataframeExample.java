@@ -1,5 +1,6 @@
 package ch.ipt.handson;
 
+import org.apache.spark.SparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -11,7 +12,6 @@ import static org.apache.spark.sql.functions.*;
 
 /*
 * More Information: https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html
-* WARNING running this piece of code will take a while, especially if you choose to include all CSV files.
 * */
 public class StreamingDataframeExample {
     public static void main(String[] args) throws StreamingQueryException, InterruptedException {
@@ -21,6 +21,9 @@ public class StreamingDataframeExample {
                 SparkSession.builder()
                         .master("local")
                         .getOrCreate();
+
+        SparkContext sc = SparkContext.getOrCreate();
+        sc.setLogLevel("ERROR");
 
         // InvoiceNo,StockCode,Description,Quantity,InvoiceDate,UnitPrice,CustomerID,Country
         StructType retailSchema = new StructType()
@@ -68,12 +71,17 @@ public class StreamingDataframeExample {
                 .start();
 
         createPurchasePerCustomerPerMonthTable.awaitTermination(10000);
-        createPurchasePerCustomerPerMonthTable.stop();
 
-        spark.sql("SELECT * " +
+        // look for CustomerID in the logs to find the output
+        for (int i = 0; i < 10; i++) {
+            spark.sql("SELECT * " +
                 "FROM customer_purchases " +
                 "ORDER BY spent DESC")
-                .show(40, false);
+                .show(10, false);
+            Thread.sleep(1000);
+        }
+
+        createPurchasePerCustomerPerMonthTable.stop();
 
     }
 }
