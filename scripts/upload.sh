@@ -13,6 +13,7 @@ gsutil cp spark-demo.jar gs://dataproc-51de3174-ccbb-43cb-bcb9-c6d7454de224-euro
 
 # Run with Dataproc
 # Note: modify class name and bucket path gs://..
+
 gcloud dataproc jobs submit spark \
 --cluster cluster-b7c2 \
 --region europe-west6 \
