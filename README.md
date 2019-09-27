@@ -4,6 +4,9 @@ This repo is used for the spark handson session at the ipt ERFA September 2019 H
 ## Good Read
 https://towardsdatascience.com/sql-at-scale-with-apache-spark-sql-and-dataframes-concepts-architecture-and-examples-c567853a702f
 
+## Information about the data set
+http://archive.ics.uci.edu/ml/datasets/Online+Retail
+
 ## More Java Examples (incl. ML, SQL and Streaming)
 https://github.com/apache/spark/tree/master/examples/src/main/java/org/apache/spark/examples
 
